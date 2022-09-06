@@ -13,21 +13,17 @@ public class DownloadController implements Controller {
     }
 
     public String serve(HttpRequest request) {
-        System.out.println("controller");
         return "HOLA";
     }
 
-    @Override
     public String getMethod() {
         return method;
     }
 
-    @Override
     public String getUri() {
         return uri;
     }
 
-    @Override
     public StringBuffer getBody() {
         return null;
     }

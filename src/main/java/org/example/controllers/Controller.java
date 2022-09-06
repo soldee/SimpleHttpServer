@@ -4,11 +4,11 @@ import org.example.Http.HttpRequest;
 
 public interface Controller {
 
-    public String getMethod();
+    String getMethod();
 
-    public String getUri();
+    String getUri();
 
-    public StringBuffer getBody();
+    StringBuffer getBody();
 
-    public String serve(HttpRequest request);
+    String serve(HttpRequest request);
 }

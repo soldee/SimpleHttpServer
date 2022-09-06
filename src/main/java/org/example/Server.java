@@ -36,14 +36,25 @@ public class Server {
         while (true) {
             Socket socket = ss.accept();
             HttpRequest request = new HttpRequest(socket.getInputStream());
-            Controller controller = getController(request);
-            String response = controller.serve(request);
 
+            byte[] rawResponse;
+            try {
+                Controller controller = getController(request);
+                String response = controller.serve(request);
+                rawResponse = buildResponse(response);
+            }
+            catch (InvalidRequestException e) {
+                rawResponse = buildErrorResponse(e.getMessage());
+            }
             OutputStream out = socket.getOutputStream();
-            out.write(buildResponse(response));
-
+            out.write(rawResponse);
             out.close();
         }
+    }
+
+    private byte[] buildErrorResponse(String response) {
+        String httpResponse = "HTTP/1.1 400 OK\r\n\r\n<html>" + response + "</html>";
+        return httpResponse.getBytes(StandardCharsets.UTF_8);
     }
 
 
