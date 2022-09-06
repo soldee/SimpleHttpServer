@@ -4,8 +4,8 @@ import org.example.Http.HttpRequest;
 
 public class DownloadController implements Controller {
 
-    private String method;
-    private String uri;
+    private final String method;
+    private final String uri;
 
     public DownloadController() {
         method = "GET";

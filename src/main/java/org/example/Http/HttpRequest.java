@@ -24,7 +24,6 @@ public class HttpRequest {
     private void parseRequest(InputStream rawRequest) throws InvalidRequestException {
         try {
             BufferedReader in = new BufferedReader(new InputStreamReader(rawRequest));
-
             // First line -> POST / HTTP/1.1\r\n
             String line = in.readLine();
             System.out.println(line);

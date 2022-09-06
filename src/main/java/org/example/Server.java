@@ -4,6 +4,7 @@ import org.example.Exceptions.InvalidRequestException;
 import org.example.Http.HttpRequest;
 import org.example.controllers.*;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.ServerSocket;
@@ -27,6 +28,7 @@ public class Server {
 
     private void resolveControllers() {
         controllers.add(new DownloadController());
+        controllers.add(new FaviconController());
     }
 
 
@@ -40,7 +42,7 @@ public class Server {
             byte[] rawResponse;
             try {
                 Controller controller = getController(request);
-                String response = controller.serve(request);
+                byte[] response = (byte[]) controller.serve(request);
                 rawResponse = buildResponse(response);
             }
             catch (InvalidRequestException e) {
@@ -58,9 +60,16 @@ public class Server {
     }
 
 
-    private byte[] buildResponse(String response) {
-        String httpResponse = "HTTP/1.1 200 OK\r\n\r\n<html>" + response + "</html>";
-        return httpResponse.getBytes(StandardCharsets.UTF_8);
+    private byte[] buildResponse(byte[] response) throws IOException {
+        /*String httpResponse = "HTTP/1.1 200 OK\r\n\r\n<html>" + response + "</html>";
+        return httpResponse.getBytes(StandardCharsets.UTF_8);*/
+        String http_resp = "HTTP/1.1 200 OK\r\n" +
+                "Accept-Ranges: bytes\r\nContent-Length: 1406\r\nContent-Type: image/x-icon" +
+                "\r\n\r\n";
+        ByteArrayOutputStream out = new ByteArrayOutputStream( );
+        out.write(http_resp.getBytes(StandardCharsets.UTF_8));
+        out.write(response);
+        return out.toByteArray();
     }
 
 

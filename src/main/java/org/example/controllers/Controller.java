@@ -10,5 +10,5 @@ public interface Controller {
 
     StringBuffer getBody();
 
-    String serve(HttpRequest request);
+    Object serve(HttpRequest request);
 }
