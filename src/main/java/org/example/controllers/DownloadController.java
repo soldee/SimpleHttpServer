@@ -1,6 +1,10 @@
 package org.example.controllers;
 
 import org.example.Http.HttpRequest;
+import org.example.Http.HttpResponse;
+
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 
 public class DownloadController implements Controller {
 
@@ -9,11 +13,16 @@ public class DownloadController implements Controller {
 
     public DownloadController() {
         method = "GET";
-        uri = "/hola";
+        uri = "/hello";
     }
 
-    public String serve(HttpRequest request) {
-        return "HOLA";
+    public HttpResponse serve(HttpRequest request) {
+        HashMap<String, String> headers = new HashMap<>();
+        headers.put("Content-Type", "text/html; charset=UTF-8");
+
+        String body = "<html><h1>Hello</h1><html>";
+
+        return new HttpResponse(headers, body.getBytes(StandardCharsets.UTF_8), 200);
     }
 
     public String getMethod() {

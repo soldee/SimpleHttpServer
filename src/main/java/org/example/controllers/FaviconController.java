@@ -2,10 +2,12 @@ package org.example.controllers;
 
 import org.apache.commons.io.IOUtils;
 import org.example.Http.HttpRequest;
+import org.example.Http.HttpResponse;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.stream.Collectors;
+import java.util.HashMap;
+
 
 public class FaviconController implements Controller {
 
@@ -17,17 +19,24 @@ public class FaviconController implements Controller {
         uri = "/favicon.ico";
     }
 
-    public byte[] serve(HttpRequest request) {
-        System.out.println("favicon");
+    public HttpResponse serve(HttpRequest request) {
+        HttpResponse response;
         try {
             FileInputStream favicon = new FileInputStream("src/main/resources/favicon.ico");
-            return IOUtils.toByteArray(favicon);
+            byte[] body = IOUtils.toByteArray(favicon);
+
+            HashMap<String,String> headers = new HashMap<>();
+            headers.put("Accept-Ranges", "bytes");
+            headers.put("Content-Length", String.valueOf(body.length));
+            headers.put("Content-Type", "image/x-icon");
+
+            response = new HttpResponse(headers, body, 200);
         }
-        catch (FileNotFoundException e) {
-            return "".getBytes(StandardCharsets.UTF_8);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        catch (Exception e) {
+            byte[] body = "Error getting resource: favicon.ico".getBytes(StandardCharsets.UTF_8);
+            response = new HttpResponse(new HashMap<>(), body, 500);
         }
+        return response;
     }
 
 

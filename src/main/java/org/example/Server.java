@@ -2,6 +2,7 @@ package org.example;
 
 import org.example.Exceptions.InvalidRequestException;
 import org.example.Http.HttpRequest;
+import org.example.Http.HttpResponse;
 import org.example.controllers.*;
 
 import java.io.ByteArrayOutputStream;
@@ -32,44 +33,45 @@ public class Server {
     }
 
 
-    public void run() throws IOException, InvalidRequestException {
+    public void run() throws IOException {
         ServerSocket ss = new ServerSocket(PORT);
 
         while (true) {
             Socket socket = ss.accept();
-            HttpRequest request = new HttpRequest(socket.getInputStream());
 
             byte[] rawResponse;
             try {
+                HttpRequest request = new HttpRequest(socket.getInputStream());
+
                 Controller controller = getController(request);
-                byte[] response = (byte[]) controller.serve(request);
-                rawResponse = buildResponse(response);
+                HttpResponse response = controller.serve(request);
+                rawResponse = response.getResponse();
             }
-            catch (InvalidRequestException e) {
-                rawResponse = buildErrorResponse(e.getMessage());
+            catch (Exception e) {
+                rawResponse = buildErrorResponse(e);
             }
+
             OutputStream out = socket.getOutputStream();
             out.write(rawResponse);
             out.close();
         }
     }
 
-    private byte[] buildErrorResponse(String response) {
-        String httpResponse = "HTTP/1.1 400 OK\r\n\r\n<html>" + response + "</html>";
+    private byte[] buildErrorResponse(Exception e) {
+        String message;
+        int statusCode;
+
+        if (e instanceof InvalidRequestException) {
+            message = e.getMessage();
+            statusCode = 400;
+        }
+        else {
+            message = "Server error";
+            statusCode = 500;
+        }
+
+        String httpResponse = "HTTP/1.1 " + statusCode + "OK\r\n\r\n<html>" + message + "</html>";
         return httpResponse.getBytes(StandardCharsets.UTF_8);
-    }
-
-
-    private byte[] buildResponse(byte[] response) throws IOException {
-        /*String httpResponse = "HTTP/1.1 200 OK\r\n\r\n<html>" + response + "</html>";
-        return httpResponse.getBytes(StandardCharsets.UTF_8);*/
-        String http_resp = "HTTP/1.1 200 OK\r\n" +
-                "Accept-Ranges: bytes\r\nContent-Length: 1406\r\nContent-Type: image/x-icon" +
-                "\r\n\r\n";
-        ByteArrayOutputStream out = new ByteArrayOutputStream( );
-        out.write(http_resp.getBytes(StandardCharsets.UTF_8));
-        out.write(response);
-        return out.toByteArray();
     }
 
 

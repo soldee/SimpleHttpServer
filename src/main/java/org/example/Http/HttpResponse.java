@@ -9,9 +9,9 @@ import java.util.HashMap;
 public class HttpResponse {
 
     private byte[] response;
-    private HashMap<String, String> headers;
-    private byte[] body;
-    private int statusCode;
+    private final HashMap<String, String> headers;
+    private final byte[] body;
+    private final int statusCode;
 
     public HttpResponse(HashMap<String, String> headers, byte[] body, int stautsCode) {
         this.headers = headers;
@@ -36,6 +36,7 @@ public class HttpResponse {
         ByteArrayOutputStream out = new ByteArrayOutputStream( );
         out.write(responseString.getBytes(StandardCharsets.UTF_8));
         out.write(body);
+
         response = out.toByteArray();
     }
 

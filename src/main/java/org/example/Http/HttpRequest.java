@@ -10,9 +10,9 @@ public class HttpRequest {
 
     private String method;
     private String uri;
-    private HashMap<String, String> headers;
+    private final HashMap<String, String> headers;
     private String httpVersion;
-    private StringBuffer body;
+    private final StringBuffer body;
 
     public HttpRequest(InputStream in) throws InvalidRequestException {
         headers = new HashMap<>();

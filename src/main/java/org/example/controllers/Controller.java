@@ -1,6 +1,7 @@
 package org.example.controllers;
 
 import org.example.Http.HttpRequest;
+import org.example.Http.HttpResponse;
 
 public interface Controller {
 
@@ -10,5 +11,5 @@ public interface Controller {
 
     StringBuffer getBody();
 
-    Object serve(HttpRequest request);
+    HttpResponse serve(HttpRequest request) throws Exception;
 }
